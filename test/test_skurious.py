@@ -1,6 +1,6 @@
 
 import numpy as np
-from ..skal.skal import ActiveLearner
+from ..skurious.skurious import ActiveLearner
 
 class MockMeanEstimator(object):
 
