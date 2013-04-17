@@ -66,3 +66,37 @@ def test_oracle_strategy_3():
     al.estimator.fit(X, y)
     q = al.query(X_query, "oracle")
     assert (q == X_query[9]).all()
+
+
+def test_oracle_strategy_4():
+    X = np.random.randint(100, size=(10,5))
+    y = np.array([7] * 10)
+    X_query = np.random.randint(100, size=(10,5))
+    est = MockMeanEstimator()
+    extra = {}
+    extra['y_query'] = np.array(range(10))
+    extra['X_test'] = np.random.randint(100, size=(5,5))
+    extra['y_test'] = np.array([7] * 5)
+    extra['X'] = X
+    extra['y'] = y
+    al = ActiveLearner(est, extra)
+    al.estimator.fit(X, y)
+    q = al.argquery(X_query, "oracle")
+    assert q == 7
+
+
+def test_oracle_strategy_5():
+    X = np.random.randint(100, size=(10,5))
+    y = np.array([7] * 10)
+    X_query = np.random.randint(100, size=(10,5))
+    est = MockMeanEstimator()
+    extra = {}
+    extra['y_query'] = np.array(range(10))
+    extra['X_test'] = np.random.randint(100, size=(5,5))
+    extra['y_test'] = np.array([4] * 5)
+    extra['X'] = X
+    extra['y'] = y
+    al = ActiveLearner(est, extra)
+    al.estimator.fit(X, y)
+    q = al.argquery(X_query, "oracle")
+    assert q == 0
