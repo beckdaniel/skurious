@@ -85,7 +85,7 @@ def test_oracle_strategy_4():
     al = ActiveLearner(est, extra)
     al.estimator.fit(X, y)
     q = al.argquery(X_query, "oracle")
-    assert q == 7
+    assert q[-1] == 7
 
 
 def test_oracle_strategy_5():
@@ -103,4 +103,4 @@ def test_oracle_strategy_5():
     al = ActiveLearner(est, extra)
     al.estimator.fit(X, y)
     q = al.argquery(X_query, "oracle")
-    assert q == 0
+    assert q[-1] == 0
