@@ -42,4 +42,5 @@ class ActiveLearner(object):
                 if mae < best_mae:
                     best_mae = mae
                     best_instance = instance
-        return best_instance
+                    best_i = i
+        return (best_i, best_instance)
