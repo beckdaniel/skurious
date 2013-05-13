@@ -3,6 +3,7 @@ import numpy as np
 from sklearn import clone
 from sklearn.metrics import mean_absolute_error as MAE
 import pdb
+import cProfile
 
 class ActiveLearner(object):
     """An active learner.
