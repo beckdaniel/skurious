@@ -18,12 +18,10 @@ class MockMeanEstimator(object):
         return self.params
 
 
-def preprocess_oracle(y_test, arg=False):
+def preprocess_oracle(y_test):
     X = np.random.randint(100, size=(10,5))
     y = np.array([7] * 10)
     X_query = np.random.randint(100, size=(10,5))
-    if arg:
-        X_query = np.concatenate((X_query, np.array([range(10)]).T), axis=1)
     est = MockMeanEstimator()
     extra = {}
     extra['y_query'] = np.array(range(10))
@@ -55,12 +53,12 @@ def test_oracle_strategy_3():
 
 
 def test_oracle_strategy_4():
-    al, X_query = preprocess_oracle(7, arg=True)
+    al, X_query = preprocess_oracle(7)#, arg=True)
     q = al.argquery(X_query, "oracle")
-    assert q[1][-1] == 7
+    assert q == 7
 
 
 def test_oracle_strategy_5():
-    al, X_query = preprocess_oracle(4, arg=True)
+    al, X_query = preprocess_oracle(4)#, arg=True)
     q = al.argquery(X_query, "oracle")
-    assert q[1][-1] == 0
+    assert q == 0

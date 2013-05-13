@@ -28,7 +28,7 @@ class ActiveLearner(object):
         estimator.fit(new_X, new_y)
         return MAE(estimator.predict(self.extra['X_test']), self.extra['y_test'])
         
-    def query(self, X, strategy):
+    def _query(self, X, strategy):
         if strategy == "oracle":
             best_mae = 1000
             for i, instance in enumerate(X):
@@ -36,17 +36,13 @@ class ActiveLearner(object):
                 if mae < best_mae:
                     best_mae = mae
                     best_instance = instance
-        return best_instance
+                    best_i = i
+        return (best_i, best_instance)
+
+    def query(self, X, strategy):
+        return self._query(X, strategy)[1]
 
     def argquery(self, X, strategy):
         """argquery: we filter the last column
         """
-        if strategy == "oracle":
-            best_mae = 1000
-            for i, instance in enumerate(X):
-                mae = self._get_oracle_mae(i, instance[:-1])
-                if mae < best_mae:
-                    best_mae = mae
-                    best_instance = instance
-                    best_i = i
-        return (best_i, best_instance)
+        return self._query(X, strategy)[0]
