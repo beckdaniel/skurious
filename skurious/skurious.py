@@ -13,8 +13,13 @@ class ActiveLearner(object):
         """init
         extra: densities, X_test, y_test, bagsize, numbags, y_query, X_train, y_train
         """
-        self.estimator = clone(estimator)
+        self.estimator = estimator
         self.extra = extra
+
+    def __getattr__(self, attribute):
+        """This is used to keep the API for the base estimator.
+        """
+        return getattr(self.estimator, attribute)
 
     def _get_oracle_mae(self, i, instance):
         estimator = clone(self.estimator)

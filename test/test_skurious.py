@@ -32,7 +32,7 @@ def preprocess_oracle(y_test, arg=False):
     extra['X_train'] = X
     extra['y_train'] = y
     al = ActiveLearner(est, extra)
-    al.estimator.fit(X, y)
+    al.fit(X, y)
     return (al, X_query)
 
 
