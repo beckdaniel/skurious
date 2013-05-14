@@ -43,6 +43,13 @@ class ActiveLearner(object):
         best_instance = X_query(best_i)
         return (best_i, best_instance)
 
+    def _query_id(self, X_query):
+        vars = self.estimator.predict_vars(X_query)
+        values = vars * np.mean(extra["densities"], axis=0)
+        best_i = values.argmax()
+        best_instance = X_query(best_i)
+        return (best_i, best_instance)
+
     def _query(self, X_query, strategy):
         if strategy == "oracle":
             return self._query_oracle(X_query)
