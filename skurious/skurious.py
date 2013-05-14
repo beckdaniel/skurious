@@ -50,6 +50,11 @@ class ActiveLearner(object):
         best_instance = X_query(best_i)
         return (best_i, best_instance)
 
+    def _query_random(self, X_query):
+        best_i = np.random.randint(0, high=X_query.shape[0])
+        best_instance = X_query[best_i]
+        return (best_i, best_instance)
+
     def _query(self, X_query, strategy):
         if strategy == "oracle":
             return self._query_oracle(X_query)
@@ -57,6 +62,8 @@ class ActiveLearner(object):
             return self._query_us(X_query)
         elif strategy == "id":
             return self._query_id(X_query)
+        elif strategy == "random":
+            return self._query_random(X_query)
 
     def query(self, X_query, strategy, extra=None):
         self.extra = extra
