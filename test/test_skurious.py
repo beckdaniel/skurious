@@ -29,36 +29,36 @@ def preprocess_oracle(y_test):
     extra['y_test'] = np.array([y_test] * 5)
     extra['X_train'] = X
     extra['y_train'] = y
-    al = ActiveLearner(est, extra)
+    al = ActiveLearner(est)
     al.fit(X, y)
-    return (al, X_query)
+    return (al, X_query, extra)
 
 
 def test_oracle_strategy_1():
-    al, X_query = preprocess_oracle(7)
-    q = al.query(X_query, "oracle")
+    al, X_query, extra = preprocess_oracle(7)
+    q = al.query(X_query, "oracle", extra)
     assert (q == X_query[7]).all()
 
 
 def test_oracle_strategy_2():
-    al, X_query = preprocess_oracle(6)
-    q = al.query(X_query, "oracle")
+    al, X_query, extra = preprocess_oracle(6)
+    q = al.query(X_query, "oracle", extra)
     assert (q == X_query[0]).all()
 
 
 def test_oracle_strategy_3():
-    al, X_query = preprocess_oracle(8)
-    q = al.query(X_query, "oracle")
+    al, X_query, extra = preprocess_oracle(8)
+    q = al.query(X_query, "oracle", extra)
     assert (q == X_query[9]).all()
 
 
 def test_oracle_strategy_4():
-    al, X_query = preprocess_oracle(7)#, arg=True)
-    q = al.argquery(X_query, "oracle")
+    al, X_query, extra = preprocess_oracle(7)#, arg=True)
+    q = al.argquery(X_query, "oracle", extra)
     assert q == 7
 
 
 def test_oracle_strategy_5():
-    al, X_query = preprocess_oracle(4)#, arg=True)
-    q = al.argquery(X_query, "oracle")
+    al, X_query, extra = preprocess_oracle(4)#, arg=True)
+    q = al.argquery(X_query, "oracle", extra)
     assert q == 0

@@ -9,12 +9,11 @@ class ActiveLearner(object):
     """An active learner.
     """
     
-    def __init__(self, estimator, extra=None):
+    def __init__(self, estimator):
         """init
-        extra: densities, X_test, y_test, bagsize, numbags, y_query, X_train, y_train
+        extra: densities, X_test, y_test, y_query, X_train, y_train
         """
         self.estimator = estimator
-        self.extra = extra
 
     def __getattr__(self, attribute):
         """This is used to keep the API for the base estimator.
@@ -27,22 +26,37 @@ class ActiveLearner(object):
         new_y = np.concatenate((self.extra['y_train'], [self.extra['y_query'][i]]))
         estimator.fit(new_X, new_y)
         return MAE(estimator.predict(self.extra['X_test']), self.extra['y_test'])
+
+    def _query_oracle(self, X_query):
+        best_mae = 1000
+        for i, instance in enumerate(X_query):
+            mae = self._get_oracle_mae(i, instance)
+            if mae < best_mae:
+                best_mae = mae
+                best_instance = instance
+                best_i = i
+        return (best_i, best_instance)
         
-    def _query(self, X, strategy):
-        if strategy == "oracle":
-            best_mae = 1000
-            for i, instance in enumerate(X):
-                mae = self._get_oracle_mae(i, instance)
-                if mae < best_mae:
-                    best_mae = mae
-                    best_instance = instance
-                    best_i = i
+    def _query_us(self, X_query):
+        vars = self.estimator.predict_vars(X_query)
+        best_i = vars.argmax()
+        best_instance = X_query(best_i)
         return (best_i, best_instance)
 
-    def query(self, X, strategy):
-        return self._query(X, strategy)[1]
+    def _query(self, X_query, strategy):
+        if strategy == "oracle":
+            return self._query_oracle(X_query)
+        elif strategy == "us":
+            return self._query_us(X_query)
+        elif strategy == "id":
+            return self._query_id(X_query)
 
-    def argquery(self, X, strategy):
+    def query(self, X_query, strategy, extra=None):
+        self.extra = extra
+        return self._query(X_query, strategy)[1]
+
+    def argquery(self, X_query, strategy, extra=None):
         """argquery: we filter the last column
         """
-        return self._query(X, strategy)[0]
+        self.extra = extra
+        return self._query(X_query, strategy)[0]
