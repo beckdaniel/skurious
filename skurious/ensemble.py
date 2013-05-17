@@ -23,6 +23,7 @@ class Bagging():
             # default bagsize is same amount of data
             self.bagsize = self.data.shape[0]
         self._gen_bags()
+        #print self.bagsize
         self.estimators = []
         for bag in self.bags:
             l = clone(self.estimator)

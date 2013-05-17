@@ -40,14 +40,14 @@ class ActiveLearner(object):
     def _query_us(self, X_query):
         vars = self.estimator.predict_vars(X_query)
         best_i = vars.argmax()
-        best_instance = X_query(best_i)
+        best_instance = X_query[best_i]
         return (best_i, best_instance)
 
     def _query_id(self, X_query):
         vars = self.estimator.predict_vars(X_query)
-        values = vars * np.mean(extra["densities"], axis=0)
+        values = vars * np.mean(self.extra["densities"], axis=0)
         best_i = values.argmax()
-        best_instance = X_query(best_i)
+        best_instance = X_query[best_i]
         return (best_i, best_instance)
 
     def _query_random(self, X_query):
@@ -74,3 +74,21 @@ class ActiveLearner(object):
         """
         self.extra = extra
         return self._query(X_query, strategy)[0]
+
+
+class GPActiveLearner(ActiveLearner):
+    """A GP ActiveLearner
+    """
+    
+    def _query_us(self, X_query):
+        vars = self.estimator.predict(X_query)[1]
+        best_i = vars.argmax()
+        best_instance = X_query[best_i]
+        return (best_i, best_instance)
+        
+    def _query_id(self, X_query):
+        vars = self.estimator.predict(X_query)[1]
+        values = np.ndarray.flatten(vars) * np.mean(self.extra["densities"], axis=0)
+        best_i = values.argmax()
+        best_instance = X_query[best_i]
+        return (best_i, best_instance)
