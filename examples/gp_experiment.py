@@ -43,18 +43,20 @@ def run_experiment(strategy, scaler, base_X_train, base_y_train, base_X_query,
                 kernel = GPy.kern.rbf(D=17, ARD=True)
                 al = GPActiveLearner(GPy.models.GP_regression(X_train, y_train, kernel))
                 al.constrain_positive('')
-                try:
-                    #al.optimize_restarts(Nrestarts=10)
-                    al.optimize()
-                    best_i = al.argquery(X_query, strategy, extra)
-                except (ValueError, np.linalg.linalg.LinAlgError) as e:
-                    print "WARNING: exception here: %s" % e
-                    print "Choosing a random instance from query pool"
-                    best_i = np.random.randint(0, high=X_query.shape[0])
-                    kernel = GPy.kern.rbf(D=17, ARD=True)
-                    al = GPActiveLearner(GPy.models.GP_regression(X_train, y_train, kernel))
-                #al.fit(X_train, y_train)
-
+                old_params = al._get_params()
+                if X_train.shape[0] % 100 == 0: #WARNING: must be multiple of START_SAMPLES
+                    try:
+                        al.optimize()
+                        old_params = al._get_params()
+                        params = old_params
+                        best_i = al.argquery(X_query, strategy, extra)
+                    except (ValueError, np.linalg.linalg.LinAlgError) as e:
+                        print "WARNING: exception here: %s" % e
+                        print "Aborting optimization..."
+                        al._set_params(old_params)
+                else:
+                    al._set_params(params)
+                best_i = al.argquery(X_query, strategy, extra)
                 best_X = X_query[best_i]
                 best_y = y_query[best_i]
 
