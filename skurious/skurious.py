@@ -69,7 +69,7 @@ class ActiveLearner(object):
             return self._query_us(X_query)
         elif strategy == "id":
             return self._query_id(X_query)
-         elif strategy == "density":
+        elif strategy == "density":
             return self._query_density(X_query)
         elif strategy == "random":
             return self._query_random(X_query)

@@ -13,7 +13,7 @@ import GPy
 def create_extra(strategy, X_query, id_exp):
     """ Instantiate an "extra" dict, used in the query method."""
     extra = {}
-    if strategy == "id":
+    if strategy == "id" or strategy == "density":
         extra["similarities"] = CS(X_query, X_query)
         extra["id_exp"] = id_exp
     return extra
@@ -112,7 +112,7 @@ def run_experiment(strategy, scaler, X_train, y_train, X_query,
             y_train = np.concatenate((y_train, [best_y]))
             X_query = np.delete(X_query, best_i, axis=0)
             y_query = np.delete(y_query, best_i, axis=0)
-            if strategy == "id":
+            if strategy == "id" or strategy == "density":
                 extra["similarities"] = np.delete(extra["similarities"], best_i, axis=0)
                 extra["similarities"] = np.delete(extra["similarities"], best_i, axis=1)
                 
